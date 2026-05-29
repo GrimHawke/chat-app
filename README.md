@@ -38,10 +38,12 @@ The backend manages room state and message persistence in Redis. Rooms are track
 
 ```bash
 # Backend (from server/ directory)
+cd server
 pip install -r requirements.txt
 flask run  # Runs on localhost:5000
 
-# Frontend (from root, in new terminal)
+# Frontend (from frontend/ directory, in new terminal)
+cd frontend
 npm install
 npm run dev  # Runs on localhost:5173
 ```
@@ -51,15 +53,13 @@ npm run dev  # Runs on localhost:5173
 2. Create a room or join with a code
 3. Start chatting—messages appear instantly for all users
 
+
 ## Testing
 
 ```bash
-# Run backend tests
+# Run backend tests (from server/ directory)
 cd server
 pytest test_api.py
-
-# Run frontend tests
-npm run test
 ```
 
 ## API Reference
@@ -88,21 +88,27 @@ npm run test
 
 ```
 chat-app/
-├── server/
-│   ├── api.py              # Flask backend + Socket.io handlers
-│   └── test_api.py         # Unit tests
-├── src/
-│   ├── App.tsx             # Main app component
-│   ├── LandingPage.tsx     # Room creation/joining
-│   ├── ChatRoom.tsx        # Chat interface
-│   └── RoomJoinForm.tsx    # Room code display
-├── package.json            # Node.js dependencies
-├── requirements.txt        # Python dependencies
-├── vite.config.ts          # Vite configuration
-└── vitest.config.ts        # Vitest configuration
+├── frontend/                   # Vite React frontend
+│   ├── src/
+│   │   ├── App.tsx            # Main app component
+│   │   ├── LandingPage.tsx    # Room creation/joining
+│   │   ├── ChatRoom.tsx       # Chat interface
+│   │   ├── RoomJoinForm.tsx   # Room code display
+│   │   └── main.tsx           # React entry point
+│   ├── index.html             # HTML template
+│   ├── package.json           # Node.js dependencies
+│   ├── vite.config.ts         # Vite configuration
+│   └── vitest.config.ts       # Vitest configuration
+├── server/                     # Flask backend
+│   ├── api.py                 # Flask backend + Socket.io handlers
+│   ├── test_api.py            # Unit tests
+│   ├── requirements.txt        # Python dependencies
+│   └── requirements-test.txt   # Testing dependencies
+├── README.md                   # This file
+└── .gitignore
 ```
 
 ## TODO:
 - Refactor server code such that different components are separated out into their own files
-- Fix frontend vitests and expand test coverage
+- Add frontend tests
 - Expand application beyond the degenerate case of a single application server such that multiple servers behind a load balancer are supported using Redis pub/sub
