@@ -18,13 +18,12 @@ services:
     ports:
       - "5000:5000"
     environment:
-      REDIS_URL: "redis:6379"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       FLASK_DEBUG: "1"
     depends_on:
       redis:
         condition: service_healthy
-    volumes:
-      - ./server:/app
     networks:
       - chat-network
     restart: unless-stopped
@@ -37,9 +36,6 @@ services:
       API_SERVER_TARGET: "http://server:5000"
     depends_on:
       - server
-    volumes:
-      - ./frontend:/usr/src/app
-      - /usr/src/app/node_modules
     networks:
       - chat-network
     restart: unless-stopped
