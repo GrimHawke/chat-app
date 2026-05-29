@@ -40,7 +40,7 @@ The backend manages room state and message persistence in Redis. Rooms are track
 # Backend (from server/ directory)
 cd server
 pip install -r requirements.txt
-flask run  # Runs on localhost:5000
+python api.py  # Runs on localhost:5000
 
 # Frontend (from frontend/ directory, in new terminal)
 cd frontend

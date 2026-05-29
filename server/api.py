@@ -3,6 +3,7 @@ import redis
 import random
 import string
 import threading
+import os
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit, join_room, leave_room, rooms
@@ -11,8 +12,12 @@ import json
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'chat-app-secret-key'
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*")
-redis_client = redis.Redis(host='localhost', port=6379, db=0)
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
+
+# Configure Redis from environment variable or use default
+redis_host = os.getenv("REDIS_HOST", "localhost")
+redis_port = int(os.getenv("REDIS_PORT", "6379"))
+redis_client = redis.Redis(host=redis_host, port=int(redis_port), db=0)
 
 # Constants
 ROOM_EXPIRATION_EMPTY = 600  # 10 minutes in seconds (when room is empty)
@@ -359,4 +364,4 @@ def handle_get_room_users(data):
         emit('error', {'message': 'Room not found', 'status': 'error'})
 
 if __name__ == '__main__':
-    socketio.run(app, port=5000, debug=True)
+    socketio.run(app, host="0.0.0.0", port=5000, debug=True, allow_unsafe_werkzeug=True)
