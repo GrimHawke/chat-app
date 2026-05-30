@@ -133,12 +133,15 @@ class TestUserManagement:
         
         add_user_to_room('ABC123', 'socket2', 'NewUser')
         
-        # Verify set was called
-        assert mock_redis.set.called
-        call_args = mock_redis.set.call_args
-        room_data_str = call_args[0][1]
-        updated_data = json.loads(room_data_str)
+        # Verify set was called twice
+        assert mock_redis.set.call_count == 2
+        room_call = mock_redis.set.call_args_list[0]
+        updated_data = json.loads(room_call.args[1])
         assert 'socket2' in updated_data['users']
+        
+        user_call = mock_redis.set.call_args_list[1]
+        updated_data = json.loads(user_call.args[1])
+        assert 'NewUser' in updated_data['username']
 
     def test_add_user_duplicate_not_added_twice(self, mock_redis, mock_time):
         """Test that adding same user twice doesn't duplicate."""
@@ -147,12 +150,18 @@ class TestUserManagement:
         
         add_user_to_room('ABC123', 'socket1', 'TestUser')
         
-        # Verify set was called
-        assert mock_redis.set.called
-        call_args = mock_redis.set.call_args
-        room_data_str = call_args[0][1]
-        updated_data = json.loads(room_data_str)
+        # Verify set was called twice
+        assert mock_redis.set.call_count == 2
+        room_call = mock_redis.set.call_args_list[0]
+        updated_data = json.loads(room_call.args[1])
+        assert updated_data['users'] == ['socket1']
         assert updated_data['users'].count('socket1') == 1
+
+        user_call = mock_redis.set.call_args_list[1]
+        updated_data = json.loads(user_call.args[1])
+        assert updated_data['room'] == 'ABC123'
+        assert updated_data['username'] == 'TestUser'
+        assert updated_data['socket_id'] == 'socket1'
 
     def test_remove_user_from_room(self, mock_redis):
         """Test removing a user from a room."""
