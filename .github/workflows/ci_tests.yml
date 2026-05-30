@@ -6,6 +6,7 @@ name: CI Tests
 on:
   pull_request:
     branches: [ "main" ]
+  workflow_call:
 
 permissions:
   contents: read
@@ -22,7 +23,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python 3.13
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v5
       with:
         python-version: "3.13"
     - name: Install dependencies
@@ -38,4 +39,4 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest test_api.py
+        pytest
